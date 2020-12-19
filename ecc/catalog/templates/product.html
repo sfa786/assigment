@@ -1,0 +1,107 @@
+{% extends "base.html" %} {% block site_wrapper %} {% load static %} {% load range %}
+<!-- Page Content -->
+
+<div class="container" id="product-section">
+    <div class="row">
+            <div class="col-md-6">
+                <img class="featurette-image img-responsive center-block img-rounded" src="{{ product.image }}">
+            </div>
+            <div class="col-md-6">
+                <div class="caption-full">
+                    <h4 class="pull-right">${{ product.price }}</h4>
+                    <h4><a href="{% url 'show_product' product_slug=product.slug %}">{{product.name}}</a>
+                    </h4>
+                    <p>Seller: <em>{{product.brand}}</em></p>
+                    <p>{{ product.description}}</p>
+
+                    <form method="post" action="." class="form-inline"> {% csrf_token %}
+                        <div class="form-group">
+                            {{ form.as_p }}
+                        </div>
+                        <button type="submit" class="btn btn-primary pull-right" value="Add To Cart" name="add-cart" alt="Add To Cart"><span class="glyphicon glyphicon-shopping-cart"></span> Add to cart
+                    </button>
+
+
+                    </form>
+                </div>
+
+                <br />
+                <div class="ratings">
+                    <p class="pull-right">{{product.comments.all.count}} reviews</p>
+                    <p>
+                        {% for star in 0|range:product.average_stars %}
+                        <span class="glyphicon glyphicon-star"></span> 
+                        {% endfor %} 
+                        {% for c in product.average_stars|range:5 %}
+                        <span class="glyphicon glyphicon-star-empty"></span> 
+                        {% endfor %} 
+                        {{product.average_stars}} stars
+
+                    </p>
+                </div>
+            </div>
+    </div>
+    <!-- end row -->
+</div>
+<!-- end container -->
+
+<div class="container">
+    <div class="well">
+
+
+        <form action="." method="post" class="form-horizontal">{% csrf_token %}
+
+            <div class="form-group">
+                <textarea class="form-control animated" cols="50" id="text" name="text" placeholder="Enter your review here..." rows="5"></textarea>
+            </div>
+
+            <div class="form-group">
+
+                <select id="stars" name="stars">
+  <option value="1">1</option>
+  <option value="2">2</option>
+  <option value="3">3</option>
+  <option value="4">4</option>
+  <option value="5">5</option>
+</select>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button class="btn btn-success pull-right" name="leave-review" type="submit">Leave a Review</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="page-header">
+            <h1><small class="pull-right">{{product.comments.all.count}}  comments</small> Comments </h1>
+        </div>
+
+        {% for comment in product.comments.all %}
+        <hr>
+        <div class="row">
+            <div class="col-md-12 comment">
+                <div class="ratings pull-right">
+                    {% for star in "x"|rjust:comment.stars %}
+                    <span class="glyphicon glyphicon-star"></span> {% endfor %} {% for c in comment.stars|range:5 %}
+                    <span class="glyphicon glyphicon-star-empty"></span> {% endfor %}
+                </div>
+                <strong>{{ comment.author }}</strong>
+                <div class="date"><small>{{ comment.created_date |date:"d/m/Y" }}</small></div>
+                <p>{{ comment.text|linebreaks }}</p>
+
+            </div>
+        </div>
+        
+        {% empty %} 
+        No comments
+        {% endfor %}
+
+    </div>
+</div>
+
+{% endblock %} 
+{% block scripts %} 
+{{ block.super }}
+<script src="{% static 'js/review.js' %}"></script>
+{% endblock %}

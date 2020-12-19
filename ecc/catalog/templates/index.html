@@ -1,0 +1,60 @@
+{% extends "base.html" %} {% block site_wrapper %} {% load range %} {% load static  %}
+
+
+
+<div class="row carousel-holder">
+
+    <div class="col-md-12">
+        <div id="carousel-foods" class="carousel slide" data-ride="carousel">
+            <ol class="carousel-indicators">
+                <li data-target="#carousel-foods" data-slide-to="0" class="active"></li>
+                <li data-target="#carousel-foods" data-slide-to="1"></li>
+                <li data-target="#carousel-foods" data-slide-to="2"></li>
+            </ol>
+            <div class="carousel-inner">
+                <div class="item active foodimg">
+                    <img class="img-responsive" src="{% static 'images/banner1.jpg' %}" alt="banner 1">
+                </div>
+                <div class="item foodimg">
+                    <img class="img-responsive" src="{% static 'images/banner2.jpg' %}" alt="banner 2">
+                </div>
+                <div class="item foodimg">
+                    <img class="img-responsive" src="{% static 'images/banner3.jpg' %}" alt="banner 3">
+                </div>
+            </div>
+            <a class="left carousel-control" href="#carousel-foods" data-slide="prev">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+            </a>
+            <a class="right carousel-control" href="#carousel-foods" data-slide="next">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+            </a>
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
+
+    {% for p in products|dictsort:"name"|slice:":6" %}
+    <div class="col-sm-4 col-lg-4 col-md-4">
+        <div class="thumbnail">
+            <img class="featurette-image img-responsive center-block products" src="{{ p.image }}">
+            <div class="caption">
+                <h4 class="pull-right">${{ p.price }}</h4>
+                <h4><a href="{% url 'show_product' product_slug=p.slug %}">{{ p.name }}</a>
+                </h4>
+                <p>{{ p.description |truncatechars:100 }}</p>
+            </div>
+            <div class="ratings">
+                <p class="pull-right">{{p.comments.all.count}} reviews</p>
+                <p>
+                    {% for star in "x"|rjust:p.average_stars %}
+                    <span class="glyphicon glyphicon-star"></span> {% endfor %} {% for c in p.average_stars|range:5 %}
+                    <span class="glyphicon glyphicon-star-empty"></span> {% endfor %} {{p.average_stars}} stars
+                </p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
